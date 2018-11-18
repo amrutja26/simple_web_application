@@ -1,0 +1,80 @@
+# This playbook requires privilege escalation to be set. Please
+# refer the ansible.cfg in current working directory for privilege_escalation
+# configuration.
+
+- name: Deploy a web application
+  hosts: db_and_web_server1
+  tasks:
+    - name: Install all required dependencies
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "epel-release"
+        - "python"
+        - "python-devel"
+
+    - name: Install MySQL community repository
+      yum:
+        name: "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"
+        state: present
+
+    - name: Install MySQL database
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "mysql-server"
+        - "mysql-devel"
+
+    - name: create MySQL configuration file
+      copy:
+        content: |
+          [client]
+          user=root
+          password="@targ8et"
+        dest: "/etc/.my.cnf"
+
+    - name: Start MySQL Service
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+
+    - name: Install mysql-python package
+      yum:
+        name: MySQL-python
+        state: present
+
+    - name: Install pip
+      yum:
+        name: "python-pip"
+        state: present
+
+    - name: Install required Python libraries
+      pip:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "flask"
+        - "flask-mysql"
+
+    - name: Create Application Database
+      mysql_db:
+        name: employee_db
+        state: present
+
+    - name: Create Database user
+      mysql_user:
+        name: db_user
+        password: Passw0rd
+        priv: '*.*:ALL'
+        state: present
+
+    - name: Copy source code
+      copy:
+        src: app.py
+        dest: /opt/app.py
+
+    - name: Start web server
+      shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &

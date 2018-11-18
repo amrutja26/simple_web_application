@@ -1,0 +1,22 @@
+# Upgrade zlib versions
+# https://github.com/ansible/ansible/issues/47927#issuecomment-438351341
+- name: Deploy a web application
+  hosts: db_and_web_server1
+  become: yes
+  become_user: root
+  tasks:
+    - name: install the 'Development tools' package group
+      yum:
+        name: "@Development tools"
+        state: present
+
+    - name: Upgrade zlib to latest version
+      shell: "{{ item }}"
+      args:
+        chdir: /tmp
+      with_items:
+        - "wget https://zlib.net/zlib-1.2.11.tar.gz"
+        - "tar -xzf zlib-1.2.11.tar.gz"
+        - "/tmp/zlib-1.2.11/configure  --prefix=/usr"
+        - "/usr/bin/make"
+        - "/usr/bin/make install"
