@@ -12,7 +12,7 @@ mysql community release requires zlib 1.2.11+ now as per https://dev.mysql.com/d
 ```
  $ ansible-playbook upgrade_zlib.yml -i inventory
 ```
-## 3. Install web application requirements and deply the web application
+## 3. Install web application requirements and deploy the application
 ```
   $ ansible-playbook playbook.yml -i inventory
 ```
