@@ -3,7 +3,7 @@
 # configuration.
 
 - name: Deploy a web application
-  hosts: db_and_web_server1
+  hosts: db_and_web_server1,db_and_web_server2
   tasks:
     - name: Install all required dependencies
       yum:

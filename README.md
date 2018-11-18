@@ -16,3 +16,5 @@ mysql community release requires zlib 1.2.11+ now as per https://dev.mysql.com/d
 ```
   $ ansible-playbook playbook.yml -i inventory
 ```
+
+**Note: Please adjust the inventory file setting as per your environment before running ansible-playbook**
